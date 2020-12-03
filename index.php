@@ -14,12 +14,12 @@
 include("conexion.php");
 
 //ejecutar instruccion sql que devuelva todos los registros almacenados y que se almacene en un array de objetos
-$conexion=$base->query("SELECT * FROM DATOS_USUARIOS");
+//$conexion=$base->query("SELECT * FROM DATOS_USUARIOS");
 
 //fetchAll permitia varios parametros dependiendo de lo que se quiere
-$registros=$conexion->fetchAll(PDO::FETCH_OBJ); //SE ALMACENA OBJETO ARRAY
+//$registros=$conexion->fetchAll(PDO::FETCH_OBJ); //SE ALMACENA OBJETO ARRAY
 
-$registros=$base->("SELECT * FROM DATOS_USUARIOS") ->fetchAll(PDO::FETCH_OBJ);
+$registros=$base->query("SELECT * FROM DATOS_USUARIOS")->fetchAll(PDO::FETCH_OBJ);
 
 ?>
 
@@ -36,16 +36,27 @@ $registros=$base->("SELECT * FROM DATOS_USUARIOS") ->fetchAll(PDO::FETCH_OBJ);
       <td class="sin">&nbsp;</td>
     </tr> 
    
-		
+
+		<?php
+    foreach($registros as $persona):?>
+
    	<tr>
-      <td> </td>
-      <td></td>
-      <td></td>
-      <td></td>
- 
-      <td class="bot"><input type='button' name='del' id='del' value='Borrar'></td>
+      <td> <?php echo $persona->ID?></td>
+      <td> <?php echo $persona->NOMBRE?></td>
+      <td> <?php echo $persona->APELLIDO?></td>
+      <td> <?php echo $persona->DIRECCION?></td>
+
+<!-- pasando id por la url con ?nombre=valor- abrir php y pasarle que me escriba en la url el propiedad del objeto persona que se encuente evaluando el id -->
+
+      <td class="bot"><a href="borrar.php?id=<?php echo $persona->ID?>"><input type='button' name='del' id='del' value='Borrar'></a></td>
       <td class='bot'><input type='button' name='up' id='up' value='Actualizar'></a></td>
-    </tr>       
+    </tr> 
+
+    <?php
+    endforeach;
+    ?>
+
+
 	<tr>
 	<td></td>
       <td><input type='text' name='Nom' size='10' class='centrado'></td>
