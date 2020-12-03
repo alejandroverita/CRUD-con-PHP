@@ -14,7 +14,7 @@
 
   include("conexion.php");
 //almacenando en estas variables lo que viaja en las url con estos parametros definidos en las etiquetas dinamicas en el index.html
-
+  if (!isset($_POST["bot_actualizar"])) {//si NO me has pulsado boton ACTUALIZAAR, entonces ejecuta estas lineas
   $id=$_GET["id"];
 
   $nom=$_GET["nom"];
@@ -23,8 +23,27 @@
 
   $dir=$_GET["dir"];
 
+  }  
+  else {
+    $id=$_POST["id"]; //Lo que haya en el campo ID del formulario
 
+    $nom=$_POST["nom"];
 
+    $ape=$_POST["ape"];
+
+    $dir=$_POST["dir"];
+
+    $sql="UPDATE DATOS_USUARIOS SET NOMBRE=:miNom, APELLIDO=:miApe, DIRECCION=:miDir WHERE ID=:miId";
+  
+    //Instruccion SQL preparada para evitar inyeccion SQL
+    $resultado=$base->prepare($sql); //prepare para crear la consulta preparada
+
+    //Ejecutar ARRAY asignando los parametros a cada variable
+    $resultado->execute(array(":miId"=>$id, ":miNom"=>$nom, ":miApe"=>$ape, ":miDir"=>$dir));
+    
+    //volver al index
+    header("Location:index.php");
+  }
 
 
 ?>
