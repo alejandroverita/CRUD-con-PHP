@@ -14,8 +14,20 @@ try{
     //variable para almacenar cuantos registrros queremos guardar por pagina
     $tamagno_paginas=3;
 
-    //Variable para mostrar el numero de pagina donde nos encontramos
-    $pagina=1;
+    //Ejecuta bloque si es que se ha pasado parametro "pagina por la URL
+    if (isset ($_GET["pagina"])) {
+        if ($_GET["pagina"]==1) {
+
+            header ("Location:index.php");
+        } 
+        else {
+            $pagina=$_GET["pagina"]; //guardar temporalmente el numero de la pagina es esa variable
+        }
+    } 
+    else {
+        //Variable para mostrar el numero de pagina donde nos encontramos
+        $pagina=1;
+    }
 
     $empezar_desde=($pagina-1)*$tamagno_paginas;
 
@@ -69,10 +81,14 @@ try{
 }
 
 
+//-------------------------------PAGINACION-------------------------
 
 
+for ($i=1; $i<=$total_paginas; $i++) {
 
+    echo " <a href='?pagina=" . $i . "'>" . $i . "</a>  ";
 
+}
 
 
 ?>
