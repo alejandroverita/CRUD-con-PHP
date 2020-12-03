@@ -19,7 +19,50 @@ include("conexion.php");
 //fetchAll permitia varios parametros dependiendo de lo que se quiere
 //$registros=$conexion->fetchAll(PDO::FETCH_OBJ); //SE ALMACENA OBJETO ARRAY
 
-$registros=$base->query("SELECT * FROM DATOS_USUARIOS")->fetchAll(PDO::FETCH_OBJ);
+
+//-------------------------PAGINACION------------------------
+
+$tamagno_paginas=3;
+
+//Ejecuta bloque si es que se ha pasado parametro "pagina por la URL
+if (isset ($_GET["pagina"])) {
+    if ($_GET["pagina"]==1) {
+
+        header ("Location:index.php");
+    } 
+    else {
+        $pagina=$_GET["pagina"]; //guardar temporalmente el numero de la pagina es esa variable
+    }
+} 
+else {
+    //Variable para mostrar el numero de pagina donde nos encontramos
+    $pagina=1;
+}
+
+$empezar_desde=($pagina-1)*$tamagno_paginas;
+
+//sentencia SQL que devuelve registros de BBDD. Saber cuantos regisros nos devuelve la consulta
+$sql_total="SELECT * FROM DATOS_USUARIOS";
+
+//Sentencia preparada que devuelve todos los registros selecionados
+$resultado=$base->prepare($sql_total);
+
+$resultado->execute(array());
+
+//cuantos rergistros nos devuelve consulta sql
+
+$num_filas=$resultado->rowCount(); //cuenta filas que tengo dentro del array
+
+//averiguar cuantas paginas va a tener nuestra paginacion
+$total_paginas=ceil($num_filas/$tamagno_paginas); //evuelve redonder el numero la funcion CEIL
+
+
+
+//---------------------------------------------------------------
+
+
+
+$registros=$base->query("SELECT * FROM DATOS_USUARIOS LIMIT $empezar_desde, $tamagno_paginas")->fetchAll(PDO::FETCH_OBJ);
 
 if (isset($_POST["cr"])) {
   $nombre=$_POST["Nom"];
@@ -82,8 +125,29 @@ if (isset($_POST["cr"])) {
       <td><input type='text' name='Ape' size='10' class='centrado'></td>
       <td><input type='text' name=' Dir' size='10' class='centrado'></td>
       <td class='bot'><input type='submit' name='cr' id='cr' value='Insertar'></td></tr>    
+      <tr><td colspan="4"><?php
+//-------------------------------PAGINACION-------------------------
+
+$ant = $pagina - 1;
+$sig = $pagina + 1;
+if ($pagina > 1) { //Colocar anterior si la página es mayor a 1
+  echo "<a href='?pagina=$ant'> Anterior </a>";
+}
+for ($i = 1; $i <= $total_paginas; $i++) {
+
+  echo "<a href='?pagina= $i'>" . $i . "</a>  "; //Mandamos el valor de i a la misma página
+}
+if ($pagina < $total_paginas) { //Colocar siguiente siempre y cuando la página sea menor al número total de páginas
+  echo "<a href='?pagina=$sig'> Siguiente </a>";
+}
+
+?>           
+Pag. <?php echo " " . $pagina . " / " . $total_paginas?></td></tr>
   </table>
 </form>
+
+
+
 <p>&nbsp;</p>
 </body>
 </html>
